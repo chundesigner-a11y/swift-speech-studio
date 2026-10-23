@@ -1,24 +1,19 @@
-import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
-import { LogOut } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+"use client";
+
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { LogOut, Upload } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
-import { useAuthUser } from "@/components/RequireAuth";
-import { usePageMeta } from "@/hooks/use-page-meta";
 
-export function AppHomePage() {
-  const user = useAuthUser();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  usePageMeta({ title: "Dashboard — Video Speed Reader", description: "Your Video Speed Reader dashboard." });
+export function AppHomePage({ email }: { email: string }) {
+  const router = useRouter();
 
   async function signOut() {
-    await queryClient.cancelQueries();
-    queryClient.clear();
-    await supabase.auth.signOut();
-    navigate("/sign-in", { replace: true });
+    await createClient().auth.signOut();
+    router.replace("/sign-in");
+    router.refresh();
   }
 
   return (
@@ -26,11 +21,16 @@ export function AppHomePage() {
       <header className="border-b">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Logo />
-          <Button variant="secondary" onClick={signOut}><LogOut /> Sign out</Button>
+          <div className="flex items-center gap-2">
+            <Button asChild>
+              <Link href="/upload"><Upload /> Upload</Link>
+            </Button>
+            <Button variant="secondary" onClick={signOut}><LogOut /> Sign out</Button>
+          </div>
         </div>
       </header>
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-16 sm:px-6 animate-in fade-in duration-500">
-        <h1 className="text-3xl font-semibold break-all">Hi {user.email}</h1>
+        <h1 className="text-3xl font-semibold break-all">Hi {email}</h1>
         <div className="mt-8 rounded-2xl border border-dashed bg-card p-10 text-muted-foreground">
           Your dashboard is coming soon. Upload functionality will be added in the next milestone.
         </div>
