@@ -1,0 +1,22 @@
+[Unit]
+Description=M1 Whisper distributor (polls Supabase, spawns worker.py)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/app/worker
+ExecStart=/home/ubuntu/app/worker/venv/bin/python /home/ubuntu/app/worker/distributor.py
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/m1-distributor.log
+StandardError=append:/var/log/m1-distributor.log
+# systemd's default PATH doesn't include the venv's bin/, so yt-dlp (installed
+# into the venv) would be invisible to worker.py without this line.
+Environment=PATH=/home/ubuntu/app/worker/venv/bin:/usr/local/bin:/usr/bin:/bin
+# Must match the region where the secrets live and the EC2 runs.
+Environment=AWS_DEFAULT_REGION=us-east-1
+
+[Install]
+WantedBy=multi-user.target
