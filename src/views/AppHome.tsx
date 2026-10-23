@@ -32,7 +32,7 @@ export function AppHomePage({ email }: { email: string }) {
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-16 sm:px-6 animate-in fade-in duration-500">
         <h1 className="text-3xl font-semibold break-all">Hi {email}</h1>
         <div className="mt-8 rounded-2xl border border-dashed bg-card p-10 text-muted-foreground">
-          Your dashboard is coming soon. Upload functionality will be added in the next milestone.
+          Paste a video link on the Upload page to get a transcript. / 到 Upload 頁貼上影片網址，就能取得逐字稿。
         </div>
       </main>
     </div>
