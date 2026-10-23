@@ -1,16 +1,33 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import { createBrowserRouter, Navigate, useSearchParams, type RouteObject } from "react-router-dom";
 
-export const getRouter = () => {
-  const queryClient = new QueryClient();
+import { LandingPage } from "@/pages/Landing";
+import { AuthPage } from "@/pages/Auth";
+import { AppHomePage } from "@/pages/AppHome";
+import { NotFoundPage } from "@/pages/NotFound";
+import { ErrorPage } from "@/pages/ErrorPage";
+import { RequireAuth } from "@/components/RequireAuth";
 
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
-  });
+// Old links used /auth?mode=signup|signin — send them to the new paths.
+function LegacyAuthRedirect() {
+  const [params] = useSearchParams();
+  return <Navigate to={params.get("mode") === "signup" ? "/sign-up" : "/sign-in"} replace />;
+}
 
-  return router;
-};
+export const routes: RouteObject[] = [
+  {
+    errorElement: <ErrorPage />,
+    children: [
+      { path: "/", element: <LandingPage /> },
+      { path: "/sign-in", element: <AuthPage mode="signin" /> },
+      { path: "/sign-up", element: <AuthPage mode="signup" /> },
+      { path: "/auth", element: <LegacyAuthRedirect /> },
+      {
+        element: <RequireAuth />,
+        children: [{ path: "/app", element: <AppHomePage /> }],
+      },
+      { path: "*", element: <NotFoundPage /> },
+    ],
+  },
+];
+
+export const router = createBrowserRouter(routes);
