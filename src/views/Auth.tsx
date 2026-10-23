@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -14,20 +14,31 @@ export function AuthPage({ mode }: { mode: "signin" | "signup" }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const isSignup = mode === "signup";
+
+  // Arriving from the confirmation email (?confirmed=1): tell them it worked.
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("confirmed")) {
+      setNotice("Your email is confirmed. Sign in to continue. / 信箱已確認，請登入。");
+    }
+  }, []);
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
+    setNotice(null);
     setLoading(true);
     const supabase = createClient();
     const { data, error } = isSignup
-      ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + "/app" } })
+      ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + "/auth/callback" } })
       : await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return setError(error.message);
-    if (!data.session) return setError("Check your email to confirm your account.");
+    if (!data.session) {
+      return setNotice("Almost done — we sent a confirmation link to " + email + ". Open it to finish signing up. / 已寄出確認信，請到信箱點連結完成註冊。");
+    }
     router.replace("/app");
     router.refresh();
   }
@@ -50,7 +61,8 @@ export function AuthPage({ mode }: { mode: "signin" | "signup" }) {
             <Label htmlFor="password">Password</Label>
             <Input id="password" type="password" required minLength={6} autoComplete={isSignup ? "new-password" : "current-password"} value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
+          {notice && <p role="status" className="rounded-lg bg-secondary px-3 py-2 text-sm text-secondary-foreground">{notice}</p>}
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? "Please wait…" : isSignup ? "Sign up" : "Sign in"}
           </Button>
