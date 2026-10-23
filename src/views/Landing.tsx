@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Target, Timer, BadgeCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { Reveal } from "@/components/Reveal";
-import { usePageMeta } from "@/hooks/use-page-meta";
 
 const features = [
   { icon: Target, title: "高準確度逐字稿", en: "High-accuracy transcripts", body: "Powered by OpenAI Whisper. Supports Chinese and English." },
@@ -12,18 +11,13 @@ const features = [
 ];
 
 export function LandingPage() {
-  usePageMeta({
-    title: "Video Speed Reader — Transcripts in three minutes",
-    description: "Upload your video, get a clean, accurate transcript in three minutes. Chinese and English, powered by Whisper.",
-  });
-
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-20 border-b bg-background/70 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Logo />
           <Button asChild>
-            <Link to="/sign-in">Sign in / 登入</Link>
+            <Link href="/sign-in">Sign in / 登入</Link>
           </Button>
         </div>
       </header>
@@ -44,7 +38,7 @@ export function LandingPage() {
             </Reveal>
             <Reveal delay={240}>
               <Button asChild size="lg" className="mt-10">
-                <Link to="/sign-up">Get started <ArrowRight /></Link>
+                <Link href="/sign-up">Get started <ArrowRight /></Link>
               </Button>
             </Reveal>
           </div>

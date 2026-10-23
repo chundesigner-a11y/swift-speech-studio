@@ -1,36 +1,35 @@
+"use client";
+
 import { useState, type FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
-import { usePageMeta } from "@/hooks/use-page-meta";
 
 export function AuthPage({ mode }: { mode: "signin" | "signup" }) {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const isSignup = mode === "signup";
 
-  usePageMeta({
-    title: isSignup ? "Sign up — Video Speed Reader" : "Sign in — Video Speed Reader",
-    description: "Sign in or create your Video Speed Reader account.",
-  });
-
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    const supabase = createClient();
     const { data, error } = isSignup
       ? await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin + "/app" } })
       : await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) return setError(error.message);
     if (!data.session) return setError("Check your email to confirm your account.");
-    navigate("/app", { replace: true });
+    router.replace("/app");
+    router.refresh();
   }
 
   return (
@@ -57,7 +56,7 @@ export function AuthPage({ mode }: { mode: "signin" | "signup" }) {
           </Button>
           <p className="text-center text-sm text-muted-foreground">
             {isSignup ? "Already have an account? " : "No account yet? "}
-            <Link to={isSignup ? "/sign-in" : "/sign-up"} className="text-primary hover:underline">
+            <Link href={isSignup ? "/sign-in" : "/sign-up"} className="text-primary hover:underline">
               {isSignup ? "Sign in" : "Sign up"}
             </Link>
           </p>
