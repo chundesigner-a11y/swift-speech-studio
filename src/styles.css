@@ -34,27 +34,29 @@
 }
 
 :root {
+  /* Canva-style palette: white canvas, signature purple, teal accent */
   --radius: 0.75rem;
-  --background: oklch(0.13 0.012 290);
-  --foreground: oklch(0.97 0.005 290);
-  --card: oklch(0.17 0.018 290);
-  --card-foreground: oklch(0.97 0.005 290);
-  --popover: oklch(0.17 0.018 290);
-  --popover-foreground: oklch(0.97 0.005 290);
-  --primary: oklch(0.65 0.22 295);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.22 0.025 290);
-  --secondary-foreground: oklch(0.97 0.005 290);
-  --muted: oklch(0.22 0.02 290);
-  --muted-foreground: oklch(0.7 0.02 290);
-  --accent: oklch(0.25 0.05 295);
-  --accent-foreground: oklch(0.97 0.005 290);
-  --destructive: oklch(0.65 0.2 22);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 13%);
-  --ring: oklch(0.65 0.22 295);
-  --glow: oklch(0.55 0.25 295 / 35%);
+  --background: #ffffff;
+  --foreground: #0e1318;
+  --card: #ffffff;
+  --card-foreground: #0e1318;
+  --popover: #ffffff;
+  --popover-foreground: #0e1318;
+  --primary: #8b3dff;
+  --primary-foreground: #ffffff;
+  --secondary: #f2eaff;
+  --secondary-foreground: #5a2bb8;
+  --muted: #f6f7f8;
+  --muted-foreground: #5c6370;
+  --accent: #f2eaff;
+  --accent-foreground: #5a2bb8;
+  --destructive: #e5484d;
+  --destructive-foreground: #ffffff;
+  --border: #e3e4e8;
+  --input: #d6d8dd;
+  --ring: #8b3dff;
+  --glow: #8b3dff;
+  --glow-2: #00c4cc;
 }
 
 @layer base {
@@ -69,7 +71,9 @@
 }
 
 @utility hero-glow {
-  background: radial-gradient(60% 50% at 50% 0%, var(--glow), transparent 70%);
+  background:
+    radial-gradient(45% 55% at 30% 0%, color-mix(in srgb, var(--glow-2) 22%, transparent), transparent 70%),
+    radial-gradient(45% 55% at 70% 0%, color-mix(in srgb, var(--glow) 22%, transparent), transparent 70%);
 }
 
 @utility reveal {
